@@ -31,7 +31,6 @@ namespace livox_ros {
 
 class Lddc;
 
-#ifdef BUILDING_ROS2
 class DriverNode final : public rclcpp::Node {
  public:
   explicit DriverNode(const rclcpp::NodeOptions& options);
@@ -51,7 +50,6 @@ class DriverNode final : public rclcpp::Node {
   std::shared_future<void> future_;
   std::promise<void> exit_signal_;
 };
-#endif
 
 } // namespace livox_ros
 

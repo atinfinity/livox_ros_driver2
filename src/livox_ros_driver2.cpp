@@ -36,7 +36,6 @@
 
 using namespace livox_ros;
 
-#ifdef BUILDING_ROS2
 namespace livox_ros
 {
 DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
@@ -113,9 +112,6 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
 
 #include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(livox_ros::DriverNode)
-
-#endif  // ifdef BUILDING_ROS2
-
 
 void DriverNode::PointCloudDataPollThread()
 {

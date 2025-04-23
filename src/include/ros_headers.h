@@ -25,8 +25,6 @@
 #ifndef ROS_HEADERS_H_
 #define ROS_HEADERS_H_
 
-#ifdef BUILDING_ROS2
 #include "ros2_headers.h"
-#endif
 
 #endif // ROS_HEADERS_H_
