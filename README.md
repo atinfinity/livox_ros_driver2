@@ -57,7 +57,7 @@ colcon build --symlink-install
 
 #### For ROS2:
 ```shell
-source ../../install/setup.sh
+source install/setup.sh
 ros2 launch livox_ros_driver2 [launch file]
 ```
 
