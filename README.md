@@ -1,6 +1,6 @@
 # Livox ROS Driver 2
 
-Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS (noetic recommended) and ROS2 (foxy or humble recommended).
+Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS2 (humble recommended).
 
   **Note :**
 
@@ -10,8 +10,6 @@ Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR pr
 
 ### 1.1 OS requirements
 
-  * Ubuntu 18.04 for ROS Melodic;
-  * Ubuntu 20.04 for ROS Noetic and ROS2 Foxy;
   * Ubuntu 22.04 for ROS2 Humble;
 
   **Tips:**
@@ -20,16 +18,7 @@ Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR pr
 
   How to install colcon: [Colcon installation instructions](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
 
-### 1.2 Install ROS & ROS2
-
-For ROS Melodic installation, please refer to:
-[ROS Melodic installation instructions](https://wiki.ros.org/melodic/Installation)
-
-For ROS Noetic installation, please refer to:
-[ROS Noetic installation instructions](https://wiki.ros.org/noetic/Installation)
-
-For ROS2 Foxy installation, please refer to:
-[ROS Foxy installation instructions](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
+### 1.2 Install ROS2
 
 For ROS2 Humble installation, please refer to:
 [ROS Humble installation instructions](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
@@ -41,7 +30,7 @@ Desktop-Full installation is recommend.
 ### 2.1 Clone Livox ROS Driver 2 source code:
 
 ```shell
-git clone https://github.com/Livox-SDK/livox_ros_driver2.git ws_livox/src/livox_ros_driver2
+git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox_ros_driver2
 ```
 
   **Note :**
@@ -56,43 +45,15 @@ git clone https://github.com/Livox-SDK/livox_ros_driver2.git ws_livox/src/livox_
 
 ### 2.3 Build the Livox ROS Driver 2:
 
-#### For ROS (take Noetic as an example):
-```shell
-source /opt/ros/noetic/setup.sh
-./build.sh ROS1
-```
-
-#### For ROS2 Foxy:
-```shell
-source /opt/ros/foxy/setup.sh
-./build.sh ROS2
-```
-
 #### For ROS2 Humble:
+
 ```shell
-source /opt/ros/humble/setup.sh
-./build.sh humble
+cd ws_livox
+rosdep install -y -i --from-paths src/livox_ros_driver2
+colcon build --symlink-install
 ```
 
 ### 2.4 Run Livox ROS Driver 2:
-
-#### For ROS:
-
-```shell
-source ../../devel/setup.sh
-roslaunch livox_ros_driver2 [launch file]
-```
-
-in which,  
-
-* **livox_ros_driver2** : is the ROS package name of Livox ROS Driver 2;
-* **[launch file]** : is the ROS launch file you want to use; the 'launch_ROS1' folder contains several launch samples for your reference;  
-
-An rviz launch example for HAP LiDAR would be:
-
-```shell
-roslaunch livox_ros_driver2 rviz_HAP.launch
-```
 
 #### For ROS2:
 ```shell
@@ -102,7 +63,7 @@ ros2 launch livox_ros_driver2 [launch file]
 
 in which,  
 
-* **[launch file]** : is the ROS2 launch file you want to use; the 'launch_ROS2' folder contains several launch samples for your reference.
+* **[launch file]** : is the ROS2 launch file you want to use; the 'launch' folder contains several launch samples for your reference.
 
 A rviz launch example for HAP LiDAR would be:
 
@@ -114,7 +75,7 @@ ros2 launch livox_ros_driver2 rviz_HAP_launch.py
 
 ### 3.1 Launch file configuration instructions
 
-Launch files of ROS are in the "ws_livox/src/livox_ros_driver2/launch_ROS1" directory and launch files of ROS2 are in the "ws_livox/src/livox_ros_driver2/launch_ROS2" directory. Different launch files have different configuration parameter values and are used in different scenarios:
+Launch files of ROS2 are in the "ws_livox/src/livox_ros_driver2/launch" directory. Different launch files have different configuration parameter values and are used in different scenarios:
 
 | launch file name          | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ |
@@ -417,53 +378,6 @@ For more infomation about the HAP config, please refer to:
         }
     ]
 }
-```
-**Launch1:**
-```
-<launch>
-    <!--user configure parameters for ros start-->
-    <arg name="lvx_file_path" default="livox_test.lvx"/>
-    <arg name="bd_list" default="100000000000000"/>
-    <arg name="xfer_format" default="0"/>
-    <arg name="multi_topic" default="1"/>
-    <arg name="data_src" default="0"/>
-    <arg name="publish_freq" default="10.0"/>
-    <arg name="output_type" default="0"/>
-    <arg name="rviz_enable" default="true"/>
-    <arg name="rosbag_enable" default="false"/>
-    <arg name="cmdline_arg" default="$(arg bd_list)"/>
-    <arg name="msg_frame_id" default="livox_frame"/>
-    <arg name="lidar_bag" default="true"/>
-    <arg name="imu_bag" default="true"/>
-    <!--user configure parameters for ros end--> 
-
-    <param name="xfer_format" value="$(arg xfer_format)"/>
-    <param name="multi_topic" value="$(arg multi_topic)"/>
-    <param name="data_src" value="$(arg data_src)"/>
-    <param name="publish_freq" type="double" value="$(arg publish_freq)"/>
-    <param name="output_data_type" value="$(arg output_type)"/>
-    <param name="cmdline_str" type="string" value="$(arg bd_list)"/>
-    <param name="cmdline_file_path" type="string" value="$(arg lvx_file_path)"/>
-    <param name="user_config_path" type="string" value="$(find livox_ros_driver2)/config/MID360_config1.json"/> # Mid360 MID360_config1 name
-    <param name="frame_id" type="string" value="$(arg msg_frame_id)"/>
-    <param name="enable_lidar_bag" type="bool" value="$(arg lidar_bag)"/>
-    <param name="enable_imu_bag" type="bool" value="$(arg imu_bag)"/>
-
-    <node name="livox_lidar_publisher1" pkg="livox_ros_driver2"
-          type="livox_ros_driver2_node" required="true"
-          output="screen" args="$(arg cmdline_arg)"/>
-
-    <group if="$(arg rviz_enable)">
-        <node name="livox_rviz" pkg="rviz" type="rviz" respawn="true"
-                args="-d $(find livox_ros_driver2)/config/display_point_cloud_ROS1.rviz"/>
-    </group>
-
-    <group if="$(arg rosbag_enable)">
-        <node pkg="rosbag" type="record" name="record" output="screen"
-                args="-a"/>
-    </group>
-
-</launch>
 ```
 **Launch2:**
 ```
