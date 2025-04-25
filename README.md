@@ -2,9 +2,8 @@
 
 Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS2 (humble recommended).
 
-  **Note :**
-
-  As a debugging tool, Livox ROS Driver is not recommended for mass production but limited to test scenarios. You should optimize the code based on the original source to meet your various needs.
+> [!NOTE]
+> As a debugging tool, Livox ROS Driver is not recommended for mass production but limited to test scenarios. You should optimize the code based on the original source to meet your various needs.
 
 ## 1. Preparation
 
@@ -12,11 +11,10 @@ Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR pr
 
   * Ubuntu 22.04 for ROS2 Humble;
 
-  **Tips:**
-
-  Colcon is a build tool used in ROS2.
-
-  How to install colcon: [Colcon installation instructions](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
+> [!TIP]
+> Colcon is a build tool used in ROS2.
+>
+> How to install colcon: [Colcon installation instructions](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
 
 ### 1.2 Install ROS2
 
@@ -33,15 +31,13 @@ Desktop-Full installation is recommend.
 git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox_ros_driver2
 ```
 
-  **Note :**
-
-  Be sure to clone the source code in a '[work_space]/src/' folder (as shown above), otherwise compilation errors will occur due to the compilation tool restriction.
+> [!NOTE]
+> Be sure to clone the source code in a `[work_space]/src/` folder (as shown above), otherwise compilation errors will occur due to the compilation tool restriction.
 
 ### 2.2 Build & install the Livox-SDK2
 
-  **Note :**
-
-  Please follow the guidance of installation in the [Livox-SDK2/README.md](https://github.com/Livox-SDK/Livox-SDK2/blob/master/README.md)
+> [!NOTE]
+> Please follow the guidance of installation in the [Livox-SDK2/README.md](https://github.com/Livox-SDK/Livox-SDK2/blob/master/README.md)
 
 ### 2.3 Build the Livox ROS Driver 2:
 
@@ -63,7 +59,7 @@ ros2 launch livox_ros_driver2 [launch file]
 
 in which,  
 
-* **[launch file]** : is the ROS2 launch file you want to use; the 'launch' folder contains several launch samples for your reference.
+* **[launch file]** : is the ROS2 launch file you want to use; the `launch` folder contains several launch samples for your reference.
 
 A rviz launch example for HAP LiDAR would be:
 
@@ -75,7 +71,7 @@ ros2 launch livox_ros_driver2 rviz_HAP_launch.py
 
 ### 3.1 Launch file configuration instructions
 
-Launch files of ROS2 are in the "ws_livox/src/livox_ros_driver2/launch" directory. Different launch files have different configuration parameter values and are used in different scenarios:
+Launch files of ROS2 are in the `ws_livox/src/livox_ros_driver2/launch` directory. Different launch files have different configuration parameter values and are used in different scenarios:
 
 | launch file name          | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ |
@@ -96,9 +92,8 @@ All internal parameters of Livox_ros_driver2 are in the launch file. Below are d
 | multi_topic  | If the LiDAR device has an independent topic to publish pointcloud data<br>0 -- All LiDAR devices use the same topic to publish pointcloud data<br>1 -- Each LiDAR device has its own topic to publish point cloud data | 0       |
 | xfer_format  | Set pointcloud format<br>0 -- Livox pointcloud2(PointXYZRTLT) pointcloud format<br>1 -- Livox customized pointcloud format<br>2 -- Standard pointcloud2 (pcl :: PointXYZI) pointcloud format in the PCL library (just for ROS) | 0       |
 
-  **Note :**
-
-  Other parameters not mentioned in this table are not suggested to be changed unless fully understood.
+> [!NOTE]
+> Other parameters not mentioned in this table are not suggested to be changed unless fully understood.
 
 &ensp;&ensp;&ensp;&ensp;***Livox_ros_driver2 pointcloud data detailed description :***
 
@@ -113,9 +108,9 @@ uint8   tag             # livox tag
 uint8   line            # laser number in lidar
 float64 timestamp       # Timestamp of point
 ```
-  **Note :**
 
-  The number of points in the frame may be different, but each point provides a timestamp.
+> [!NOTE]
+> The number of points in the frame may be different, but each point provides a timestamp.
 
 2. Livox customized data package format, as follows :
 
@@ -146,7 +141,7 @@ uint8   line            # laser number in lidar
 
 ## 4. LiDAR config
 
-LiDAR Configurations (such as ip, port, data type... etc.) can be set via a json-style config file. Config files for single HAP, Mid360 and mixed-LiDARs are in the "config" folder. The parameter naming *'user_config_path'* in launch files indicates such json file path.
+LiDAR Configurations (such as ip, port, data type... etc.) can be set via a json-style config file. Config files for single HAP, Mid360 and mixed-LiDARs are in the `config` folder. The parameter naming *'user_config_path'* in launch files indicates such json file path.
 
 1. Follow is a configuration example for HAP LiDAR (located in config/HAP_config.json):
 
@@ -211,7 +206,7 @@ The parameter attributes in the above json file are described in the following t
 For more infomation about the HAP config, please refer to:
 [HAP Config File Description](https://github.com/Livox-SDK/Livox-SDK2/wiki/hap-config-file-description)
 
-2. When connecting multiple LiDARs, add objects corresponding to different LiDARs to the "lidar_configs" array. Examples of mixed-LiDARs config file contents are as follows :
+2. When connecting multiple LiDARs, add objects corresponding to different LiDARs to the `lidar_configs` array. Examples of mixed-LiDARs config file contents are as follows :
 
 ```json
 {
@@ -390,11 +385,11 @@ For more infomation about the HAP config, please refer to:
 
 ### 6.1 launch with "livox_lidar_rviz_HAP.launch" but no point cloud display on the grid?
 
-Please check the "Global Options - Fixed Frame" field in the RViz "Display" pannel. Set the field value to "livox_frame" and check the "PointCloud2" option in the pannel.
+Please check the `Global Options - Fixed Frame` field in the RViz `Display` pannel. Set the field value to `livox_frame` and check the `PointCloud2` option in the pannel.
 
 ### 6.2 launch with command "ros2 launch livox_lidar_rviz_HAP_launch.py" but cannot open shared object file "liblivox_sdk_shared.so" ?
 
-Please add '/usr/local/lib' to the env LD_LIBRARY_PATH.
+Please add `/usr/local/lib` to the env LD_LIBRARY_PATH.
 
 * If you want to add to current terminal:
 
