@@ -1,6 +1,6 @@
 # Livox ROS Driver 2
 
-Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS2 (humble recommended).
+Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS2 (jazzy recommended).
 
 > [!NOTE]
 > As a debugging tool, Livox ROS Driver is not recommended for mass production but limited to test scenarios. You should optimize the code based on the original source to meet your various needs.
@@ -9,17 +9,17 @@ Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR pr
 
 ### 1.1 OS requirements
 
-  * Ubuntu 22.04 for ROS2 Humble;
+  * Ubuntu 24.04 for ROS2 Jazzy;
 
 > [!TIP]
 > Colcon is a build tool used in ROS2.
 >
-> How to install colcon: [Colcon installation instructions](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
+> How to install colcon: [Colcon installation instructions](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
 
 ### 1.2 Install ROS2
 
-For ROS2 Humble installation, please refer to:
-[ROS Humble installation instructions](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
+For ROS2 Jazzy installation, please refer to:
+[ROS Jazzy installation instructions](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debians.html)
 
 Desktop-Full installation is recommend.
 
@@ -28,7 +28,7 @@ Desktop-Full installation is recommend.
 ### 2.1 Clone Livox ROS Driver 2 source code:
 
 ```shell
-git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox_ros_driver2
+git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox_ros_driver2 -b jazzy
 ```
 
 > [!NOTE]
@@ -38,15 +38,16 @@ git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox
 
 > [!NOTE]
 > Please follow the guidance of installation in the [Livox-SDK2/README.md](https://github.com/Livox-SDK/Livox-SDK2/blob/master/README.md)
+> And, please follow [this instructions](https://github.com/Livox-SDK/Livox-SDK2/pull/85) for `liblivox_lidar_sdk_shared not found` error.
 
 ### 2.3 Build the Livox ROS Driver 2:
 
-#### For ROS2 Humble:
+#### For ROS2 Jazzy:
 
 ```shell
 cd ws_livox
 rosdep install -y -i --from-paths src/livox_ros_driver2
-colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -Wno-dev
 ```
 
 ### 2.4 Run Livox ROS Driver 2:
