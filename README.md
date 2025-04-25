@@ -50,7 +50,7 @@ git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox
 ```shell
 cd ws_livox
 rosdep install -y -i --from-paths src/livox_ros_driver2
-colcon build --symlink-install
+colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 
 ### 2.4 Run Livox ROS Driver 2:
