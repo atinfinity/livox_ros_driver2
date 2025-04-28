@@ -1,6 +1,6 @@
 # Livox ROS Driver 2
 
-Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS2 (humble recommended).
+Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR products produced by Livox, applicable for ROS 2 (humble recommended).
 
 > [!NOTE]
 > As a debugging tool, Livox ROS Driver is not recommended for mass production but limited to test scenarios. You should optimize the code based on the original source to meet your various needs.
@@ -9,16 +9,16 @@ Livox ROS Driver 2 is the 2nd-generation driver package used to connect LiDAR pr
 
 ### 1.1 OS requirements
 
-  * Ubuntu 22.04 for ROS2 Humble;
+  * Ubuntu 22.04 for ROS 2 Humble;
 
 > [!TIP]
-> Colcon is a build tool used in ROS2.
+> Colcon is a build tool used in ROS 2.
 >
 > How to install colcon: [Colcon installation instructions](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
 
-### 1.2 Install ROS2
+### 1.2 Install ROS 2
 
-For ROS2 Humble installation, please refer to:
+For ROS 2 Humble installation, please refer to:
 [ROS Humble installation instructions](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 
 Desktop-Full installation is recommend.
@@ -41,7 +41,7 @@ git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox
 
 ### 2.3 Build the Livox ROS Driver 2:
 
-#### For ROS2 Humble:
+#### For ROS 2 Humble:
 
 ```shell
 cd ws_livox
@@ -51,7 +51,7 @@ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 ### 2.4 Run Livox ROS Driver 2:
 
-#### For ROS2:
+#### For ROS 2:
 ```shell
 source install/setup.sh
 ros2 launch livox_ros_driver2 [launch file]
@@ -59,7 +59,7 @@ ros2 launch livox_ros_driver2 [launch file]
 
 in which,  
 
-* **[launch file]** : is the ROS2 launch file you want to use; the `launch` folder contains several launch samples for your reference.
+* **[launch file]** : is the ROS 2 launch file you want to use; the `launch` folder contains several launch samples for your reference.
 
 A rviz launch example for HAP LiDAR would be:
 
@@ -71,7 +71,7 @@ ros2 launch livox_ros_driver2 rviz_HAP_launch.py
 
 ### 3.1 Launch file configuration instructions
 
-Launch files of ROS2 are in the `ws_livox/src/livox_ros_driver2/launch` directory. Different launch files have different configuration parameter values and are used in different scenarios:
+Launch files of ROS 2 are in the `ws_livox/src/livox_ros_driver2/launch` directory. Different launch files have different configuration parameter values and are used in different scenarios:
 
 | launch file name          | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ |
