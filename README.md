@@ -37,7 +37,7 @@ git clone https://github.com/atinfinity/livox_ros_driver2.git ws_livox/src/livox
 ### 2.2 Build & install the Livox-SDK2
 
 > [!NOTE]
-> Please follow the guidance of installation in the [Livox-SDK2/README.md](https://github.com/Livox-SDK/Livox-SDK2/blob/master/README.md)
+> Please follow the guidance of installation in the [Livox-SDK2/README.md](https://github.com/atinfinity/Livox-SDK2/blob/master/README.md)
 
 ### 2.3 Build the Livox ROS Driver 2:
 
