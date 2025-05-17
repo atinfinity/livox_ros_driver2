@@ -203,7 +203,7 @@ The parameter attributes in the above json file are described in the following t
 | pattern_mode                | Int     | Space scan pattern<br>0 -- non-repeating scanning pattern mode<br>1 -- repeating scanning pattern mode <br>2 -- repeating scanning pattern mode (low scanning rate) | 0               |
 | frame_id                    | String  | frame_id of LiDAR and IMU                | "livox_frame"   |
 | blind_spot_set (Only for HAP LiDAR)                 | Int     | Set blind spot<br>Range from 50 cm to 200 cm               | 50               |
-| extrinsic_parameter |      | Set extrinsic parameter<br> The data types of "roll" "picth" "yaw" are float(Unit: degree) <br>  The data types of "x" "y" "z" are int(Unit: mm)<br>               |
+| extrinsic_parameter |      | Set extrinsic parameter<br> The data types of "roll" "picth" "yaw" are float (Unit: degree) <br>  The data types of "x" "y" "z" are int (Unit: mm)<br>               |
 
 For more infomation about the HAP config, please refer to:
 [HAP Config File Description](https://github.com/Livox-SDK/Livox-SDK2/wiki/hap-config-file-description)
