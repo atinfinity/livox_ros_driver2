@@ -99,7 +99,7 @@ bool LivoxLidarConfigParser::ParseUserConfigs(const rapidjson::Document &doc,
       }
       user_config.blind_spot_set = -1;
     } else {
-      user_config.blind_spot_set = static_cast<int8_t>(config["blind_spot_set"].GetInt());
+      user_config.blind_spot_set = config["blind_spot_set"].GetInt();
     }
     if (!config.HasMember("dual_emit_en") || !config["dual_emit_en"].IsInt()) {
       if (config.HasMember("dual_emit_en")) {
