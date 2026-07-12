@@ -165,12 +165,22 @@ void PubHandler::CheckTimer(uint32_t id) {
 
   if (PubHandler::is_timestamp_sync_.load()) { // Enable time synchronization
     auto& process_handler = lidar_process_handlers_[id];
-    uint64_t recent_time_ms = process_handler->GetRecentTimeStamp() / kRatioOfMsToNs;
-    if ((recent_time_ms % publish_interval_ms_ != 0) || recent_time_ms == 0) {
+    uint64_t recent_time = process_handler->GetRecentTimeStamp();
+    if (recent_time == 0) {
+      return;
+    }
+    // Publish when the newest point has crossed a publish-interval
+    // boundary since the frame's base time. Requiring the newest point
+    // to land in an exactly aligned millisecond (recent_time_ms %
+    // interval == 0) missed the boundary whenever a packet skipped over
+    // that millisecond, silently merging the frame into the next one.
+    uint64_t base_time_ms = process_handler->GetLidarBaseTime() / kRatioOfMsToNs;
+    uint64_t recent_time_ms = recent_time / kRatioOfMsToNs;
+    if (recent_time_ms / publish_interval_ms_ <= base_time_ms / publish_interval_ms_) {
       return;
     }
 
-    uint64_t diff = process_handler->GetRecentTimeStamp() - process_handler->GetLidarBaseTime();
+    uint64_t diff = recent_time - process_handler->GetLidarBaseTime();
     if (diff < publish_interval_tolerance_) {
       return;
     }
