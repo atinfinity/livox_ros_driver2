@@ -75,6 +75,10 @@ void Lds::ResetLds(uint8_t data_src) {
 
 void Lds::RequestExit() {
   request_exit_ = true;
+  // Wake up the poll threads blocked in Semaphore::Wait() so that
+  // DriverNode's destructor can join them even when no data is arriving.
+  pcd_semaphore_.Signal();
+  imu_semaphore_.Signal();
 }
 
 bool Lds::IsAllQueueEmpty() {
