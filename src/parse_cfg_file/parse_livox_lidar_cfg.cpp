@@ -54,6 +54,7 @@ bool LivoxLidarConfigParser::Parse(std::vector<UserLivoxLidarConfig> &lidar_conf
       std::cout << "failed to parse basic configs" << std::endl;
       break;
     }
+    std::fclose(raw_file);
     return true;
   } while (false);
 
