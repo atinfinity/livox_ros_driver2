@@ -51,6 +51,12 @@ void LivoxLidarCallback::LidarInfoChangeCallback(const uint32_t handle,
     }
     LidarDevice *p_lidar = &(lds_lidar->lidars_[index]);
     p_lidar->lidar_type = kLivoxLidarType;
+    p_lidar->handle = handle;
+    p_lidar->livox_config.handle = handle;
+    p_lidar->livox_config.frame_id = "livox_frame";
+    // No config options will be set for this lidar, so no Set* callback
+    // will ever mark it as sampling; without this its data is dropped.
+    p_lidar->connect_state = kConnectStateSampling;
   } else {
     // set the lidar according to the user-defined config
     const UserLivoxLidarConfig& config = lidar_device->livox_config;
@@ -86,6 +92,12 @@ void LivoxLidarCallback::LidarInfoChangeCallback(const uint32_t handle,
                               LivoxLidarCallback::SetDualEmitCallback, lds_lidar);
         std::cout << "set dual emit mode, handle: " << handle << ", enable dual emit: "
                   << static_cast<int32_t>(config.dual_emit_en) << std::endl;
+      }
+      if (lidar_device->livox_config.set_bits == 0) {
+        // No settable option was present in the config, so no Set*
+        // callback will ever mark this lidar as sampling; do it here or
+        // its data would be dropped forever.
+        lidar_device->connect_state = kConnectStateSampling;
       }
     } // free lock for set_bits
 
