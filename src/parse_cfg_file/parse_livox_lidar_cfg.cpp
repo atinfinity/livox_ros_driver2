@@ -23,6 +23,7 @@
 //
 
 #include "parse_livox_lidar_cfg.h"
+#include <arpa/inet.h>
 #include <iostream>
 
 namespace livox_ros {
@@ -73,6 +74,11 @@ bool LivoxLidarConfigParser::ParseUserConfigs(const rapidjson::Document &doc,
 
     // parse user configs
     user_config.handle = IpStringToNum(std::string(config["ip"].GetString()));
+    if (user_config.handle == INADDR_NONE) {
+      std::cout << "skip a lidar config, invalid ip: "
+                << config["ip"].GetString() << std::endl;
+      continue;
+    }
     if (!config.HasMember("pcl_data_type")) {
       user_config.pcl_data_type = -1;
     } else {
