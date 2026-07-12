@@ -24,6 +24,8 @@
 
 #include "livox_lidar_callback.h"
 
+#include <map>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <iostream>
@@ -51,6 +53,12 @@ void LivoxLidarCallback::LidarInfoChangeCallback(const uint32_t handle,
     }
     LidarDevice *p_lidar = &(lds_lidar->lidars_[index]);
     p_lidar->lidar_type = kLivoxLidarType;
+    p_lidar->handle = handle;
+    p_lidar->livox_config.handle = handle;
+    p_lidar->livox_config.frame_id = "livox_frame";
+    // No config options will be set for this lidar, so no Set* callback
+    // will ever mark it as sampling; without this its data is dropped.
+    p_lidar->connect_state = kConnectStateSampling;
   } else {
     // set the lidar according to the user-defined config
     const UserLivoxLidarConfig& config = lidar_device->livox_config;
@@ -87,6 +95,12 @@ void LivoxLidarCallback::LidarInfoChangeCallback(const uint32_t handle,
         std::cout << "set dual emit mode, handle: " << handle << ", enable dual emit: "
                   << static_cast<int32_t>(config.dual_emit_en) << std::endl;
       }
+      if (lidar_device->livox_config.set_bits == 0) {
+        // No settable option was present in the config, so no Set*
+        // callback will ever mark this lidar as sampling; do it here or
+        // its data would be dropped forever.
+        lidar_device->connect_state = kConnectStateSampling;
+      }
     } // free lock for set_bits
 
     // set extrinsic params into lidar
@@ -112,11 +126,35 @@ void LivoxLidarCallback::WorkModeChangedCallback(livox_status status,
                                                  uint32_t handle,
                                                  LivoxLidarAsyncControlResponse *response,
                                                  void *client_data) {
+  // Retries must be bounded: this callback runs on the SDK's command
+  // thread (the sleep stalls every other lidar's commands), and a
+  // synchronous send failure re-enters this callback recursively.
+  static constexpr int kMaxWorkModeRetries = 10;
+  static std::mutex retry_mutex;
+  static std::map<uint32_t, int> retry_counts;
+
   if (status != kLivoxLidarStatusSuccess) {
+    int count = 0;
+    {
+      std::lock_guard<std::mutex> lock(retry_mutex);
+      count = ++retry_counts[handle];
+      if (count >= kMaxWorkModeRetries) {
+        retry_counts.erase(handle);
+      }
+    }
+    if (count >= kMaxWorkModeRetries) {
+      std::cout << "failed to change work mode, handle: " << handle
+                << ", giving up after " << count << " attempts" << std::endl;
+      return;
+    }
     std::cout << "failed to change work mode, handle: " << handle << ", try again..."<< std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     SetLivoxLidarWorkMode(handle, kLivoxLidarNormal, WorkModeChangedCallback, nullptr);
     return;
+  }
+  {
+    std::lock_guard<std::mutex> lock(retry_mutex);
+    retry_counts.erase(handle);
   }
   std::cout << "successfully change work mode, handle: " << handle << std::endl;
   return;
