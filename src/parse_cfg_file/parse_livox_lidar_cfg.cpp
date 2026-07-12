@@ -65,40 +65,63 @@ bool LivoxLidarConfigParser::ParseUserConfigs(const rapidjson::Document &doc,
                                               std::vector<UserLivoxLidarConfig> &user_configs) {
   const rapidjson::Value &lidar_configs = doc["lidar_configs"];
   for (auto &config : lidar_configs.GetArray()) {
-    if (!config.HasMember("ip")) {
+    if (!config.IsObject()) {
+      std::cout << "skip an element of lidar_configs, it is not an object" << std::endl;
+      continue;
+    }
+    if (!config.HasMember("ip") || !config["ip"].IsString()) {
+      std::cout << "skip a lidar config, \"ip\" is missing or not a string" << std::endl;
       continue;
     }
     UserLivoxLidarConfig user_config;
 
     // parse user configs
     user_config.handle = IpStringToNum(std::string(config["ip"].GetString()));
-    if (!config.HasMember("pcl_data_type")) {
+    if (!config.HasMember("pcl_data_type") || !config["pcl_data_type"].IsInt()) {
+      if (config.HasMember("pcl_data_type")) {
+        std::cout << "\"pcl_data_type\" is not an integer, ignored" << std::endl;
+      }
       user_config.pcl_data_type = -1;
     } else {
       user_config.pcl_data_type = static_cast<int8_t>(config["pcl_data_type"].GetInt());
     }
-    if (!config.HasMember("pattern_mode")) {
+    if (!config.HasMember("pattern_mode") || !config["pattern_mode"].IsInt()) {
+      if (config.HasMember("pattern_mode")) {
+        std::cout << "\"pattern_mode\" is not an integer, ignored" << std::endl;
+      }
       user_config.pattern_mode = -1;
     } else {
       user_config.pattern_mode = static_cast<int8_t>(config["pattern_mode"].GetInt());
     }
-    if (!config.HasMember("blind_spot_set")) {
+    if (!config.HasMember("blind_spot_set") || !config["blind_spot_set"].IsInt()) {
+      if (config.HasMember("blind_spot_set")) {
+        std::cout << "\"blind_spot_set\" is not an integer, ignored" << std::endl;
+      }
       user_config.blind_spot_set = -1;
     } else {
       user_config.blind_spot_set = static_cast<int8_t>(config["blind_spot_set"].GetInt());
     }
-    if (!config.HasMember("dual_emit_en")) {
+    if (!config.HasMember("dual_emit_en") || !config["dual_emit_en"].IsInt()) {
+      if (config.HasMember("dual_emit_en")) {
+        std::cout << "\"dual_emit_en\" is not an integer, ignored" << std::endl;
+      }
       user_config.dual_emit_en = -1;
     } else {
       user_config.dual_emit_en = static_cast<uint8_t>(config["dual_emit_en"].GetInt());
     }
-    if (!config.HasMember("frame_id")) {
+    if (!config.HasMember("frame_id") || !config["frame_id"].IsString()) {
+      if (config.HasMember("frame_id")) {
+        std::cout << "\"frame_id\" is not a string, ignored" << std::endl;
+      }
       user_config.frame_id = "livox_frame";
       std::cout << "No frame id was given, set to default of 'livox_frame'" << std::endl;
     } else {
       user_config.frame_id = static_cast<std::string>(config["frame_id"].GetString());
     }
-    if (!config.HasMember("extrinsic_parameter")) {
+    if (!config.HasMember("extrinsic_parameter") || !config["extrinsic_parameter"].IsObject()) {
+      if (config.HasMember("extrinsic_parameter")) {
+        std::cout << "\"extrinsic_parameter\" is not an object, ignored" << std::endl;
+      }
       memset(&user_config.extrinsic_param, 0, sizeof(user_config.extrinsic_param));
     } else {
       auto &value = config["extrinsic_parameter"];
@@ -127,31 +150,43 @@ bool LivoxLidarConfigParser::ParseExtrinsics(const rapidjson::Value &value,
                                              ExtParameter &param) {
   if (!value.HasMember("roll")) {
     param.roll = 0.0f;
+  } else if (!value["roll"].IsNumber()) {
+    return false;
   } else {
     param.roll = static_cast<float>(value["roll"].GetFloat());
   }
   if (!value.HasMember("pitch")) {
     param.pitch = 0.0f;
+  } else if (!value["pitch"].IsNumber()) {
+    return false;
   } else {
     param.pitch = static_cast<float>(value["pitch"].GetFloat());
   }
   if (!value.HasMember("yaw")) {
     param.yaw = 0.0f;
+  } else if (!value["yaw"].IsNumber()) {
+    return false;
   } else {
     param.yaw = static_cast<float>(value["yaw"].GetFloat());
   }
   if (!value.HasMember("x")) {
     param.x = 0;
+  } else if (!value["x"].IsInt()) {
+    return false;
   } else {
     param.x = static_cast<int32_t>(value["x"].GetInt());
   }
   if (!value.HasMember("y")) {
     param.y = 0;
+  } else if (!value["y"].IsInt()) {
+    return false;
   } else {
     param.y = static_cast<int32_t>(value["y"].GetInt());
   }
   if (!value.HasMember("z")) {
     param.z = 0;
+  } else if (!value["z"].IsInt()) {
+    return false;
   } else {
     param.z = static_cast<int32_t>(value["z"].GetInt());
   }
