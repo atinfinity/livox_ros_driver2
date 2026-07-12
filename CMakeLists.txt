@@ -1,16 +1,21 @@
 # Copyright(c) 2020 livoxtech limited.
 
 cmake_minimum_required(VERSION 3.14)
-project(livox_ros_driver2)
+
+# Read version info from src/include/livox_ros_driver2.h
+include(cmake/version.cmake)
+# C must stay enabled: the rosidl-generated typesupport targets are C
+project(livox_ros_driver2 VERSION ${LIVOX_ROS_DRIVER2_VERSION} LANGUAGES C CXX)
+message(STATUS "${PROJECT_NAME} version: ${LIVOX_ROS_DRIVER2_VERSION}")
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++17 (the standard used by ROS 2 Humble and later)
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake/modules")
@@ -18,11 +23,6 @@ list(INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake/modules")
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)
 endif()
-
-# Printf version info
-include(cmake/version.cmake)
-project(${PROJECT_NAME} VERSION ${LIVOX_ROS_DRIVER2_VERSION} LANGUAGES CXX)
-message(STATUS "${PROJECT_NAME} version: ${LIVOX_ROS_DRIVER2_VERSION}")
 
 # find dependencies
 # uncomment the following section in order to fill in
@@ -34,14 +34,6 @@ find_package(PCL REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
-
-# check apr
-find_package(PkgConfig)
-pkg_check_modules(APR apr-1)
-if (APR_FOUND)
-  message(${APR_INCLUDE_DIRS})
-  message(${APR_LIBRARIES})
-endif (APR_FOUND)
 
 # generate custom msg headers
 set(LIVOX_INTERFACES livox_interfaces2)
@@ -96,9 +88,7 @@ target_link_libraries(${PROJECT_NAME} "${cpp_typesupport_target}")
 # include file direcotry
 target_include_directories(${PROJECT_NAME} PUBLIC
   ${PCL_INCLUDE_DIRS}
-  ${APR_INCLUDE_DIRS}
   ${LIVOX_LIDAR_SDK_INCLUDE_DIR}
-  ${LIVOX_INTERFACES_INCLUDE_DIRECTORIES}   # for custom msgs
   3rdparty
   src
 )
@@ -106,11 +96,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # link libraries
 target_link_libraries(${PROJECT_NAME}
   ${LIVOX_LIDAR_SDK_LIBRARY}
-  ${LIVOX_INTERFACE_TARGET}   # for custom msgs
-  ${PPT_LIBRARY}
-  ${Boost_LIBRARY}
   ${PCL_LIBRARIES}
-  ${APR_LIBRARIES}
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}

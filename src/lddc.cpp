@@ -253,7 +253,11 @@ void Lddc::InitPointcloud2Msg(const StoragePacket& pkg, PointCloud2& cloud, uint
     point.reflectivity = pkg.points[i].intensity;
     point.tag = pkg.points[i].tag;
     point.line = pkg.points[i].line;
-    point.timestamp = static_cast<double>(pkg.points[i].offset_time);
+    // offset_time is an absolute epoch time in ns; at that magnitude a
+    // double only resolves ~256 ns steps. Publish the offset relative
+    // to header.stamp (base_time) instead: it is exact in a double and
+    // matches the CustomMsg offset_time semantics.
+    point.timestamp = static_cast<double>(pkg.points[i].offset_time - pkg.base_time);
     points.push_back(std::move(point));
   }
   cloud.data.resize(pkg.points_num * sizeof(LivoxPointXyzrtlt));
