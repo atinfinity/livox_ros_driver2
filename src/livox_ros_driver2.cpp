@@ -68,6 +68,15 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
   this->get_parameter("output_data_type", output_type);
   this->get_parameter("frame_id", frame_id);
 
+  if (output_type != kOutputToRos) {
+    // The rosbag output path is a leftover ROS1 stub: every publish
+    // function silently discards the data for this output type.
+    DRIVER_ERROR(*this,
+                 "output_data_type %d (bag file output) is not implemented, "
+                 "falling back to topic output.", output_type);
+    output_type = kOutputToRos;
+  }
+
   if (publish_freq > 100.0) {
     publish_freq = 100.0;
   } else if (publish_freq < 0.5) {
