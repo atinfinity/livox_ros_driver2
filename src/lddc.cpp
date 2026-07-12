@@ -129,6 +129,18 @@ void Lddc::PollingLidarPointCloudData(uint8_t index, LidarDevice *lidar) {
       PublishCustomPointcloud(p_queue, index, lidar->livox_config.frame_id);
     } else if (kPclPxyziMsg == transfer_format_) {
       PublishPclMsg(p_queue, index, lidar->livox_config.frame_id);
+    } else {
+      // An unrecognized format publishes nothing: discard the queued
+      // data, otherwise this loop never terminates and starves the
+      // remaining lidars while spinning at 100% CPU.
+      static bool warned = false;
+      if (!warned) {
+        std::cout << "error: unsupported xfer_format: " << transfer_format_
+                  << ", discarding lidar data" << std::endl;
+        warned = true;
+      }
+      StoragePacket pkg;
+      QueuePop(p_queue, &pkg);
     }
   }
 }
@@ -188,6 +200,13 @@ void Lddc::PublishPclMsg(LidarDataQueue *queue, uint8_t index, const std::string
               << std::endl;
   }
   first_log = false;
+  // Nothing is published in this format: drain the queue so the caller's
+  // polling loop terminates instead of spinning forever on a queue the
+  // producer keeps refilling.
+  while (!QueueIsEmpty(queue)) {
+    StoragePacket pkg;
+    QueuePop(queue, &pkg);
+  }
   return;
 }
 
