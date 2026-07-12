@@ -32,7 +32,11 @@ DriverNode& DriverNode::GetNode() noexcept {
 }
 
 DriverNode::~DriverNode() {
-  lddc_ptr_->lds_->RequestExit();
+  // lds_ is only registered when data_src is kSourceRawLidar; it stays
+  // nullptr for an invalid data_src, so guard before requesting exit.
+  if (lddc_ptr_ && lddc_ptr_->lds_) {
+    lddc_ptr_->lds_->RequestExit();
+  }
   exit_signal_.set_value();
   pointclouddata_poll_thread_->join();
   imudata_poll_thread_->join();
