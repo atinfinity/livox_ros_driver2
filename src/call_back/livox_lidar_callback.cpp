@@ -148,9 +148,13 @@ void LivoxLidarCallback::SetDataTypeCallback(livox_status status, uint32_t handl
     std::cout << "set data type timeout, handle: " << handle
               << ", try again..." << std::endl;
   } else {
-    std::cout << "failed to set data type, handle: " << handle
-              << ", return code: " << response->ret_code
-              << ", error key: " << response->error_key << std::endl;
+    // response is nullptr when the SDK reports kLivoxLidarStatusSendFailed
+    std::cout << "failed to set data type, handle: " << handle;
+    if (response != nullptr) {
+      std::cout << ", return code: " << response->ret_code
+                << ", error key: " << response->error_key;
+    }
+    std::cout << std::endl;
   }
   return;
 }
@@ -181,9 +185,12 @@ void LivoxLidarCallback::SetPatternModeCallback(livox_status status, uint32_t ha
     std::cout << "set pattern mode timeout, handle: " << handle
               << ", try again..." << std::endl;
   } else {
-    std::cout << "failed to set pattern mode, handle: " << handle
-              << ", return code: " << response->ret_code
-              << ", error key: " << response->error_key << std::endl;
+    std::cout << "failed to set pattern mode, handle: " << handle;
+    if (response != nullptr) {
+      std::cout << ", return code: " << response->ret_code
+                << ", error key: " << response->error_key;
+    }
+    std::cout << std::endl;
   }
   return;
 }
@@ -214,9 +221,12 @@ void LivoxLidarCallback::SetBlindSpotCallback(livox_status status, uint32_t hand
     std::cout << "set blind spot timeout, handle: " << handle
               << ", try again..." << std::endl;
   } else {
-    std::cout << "failed to set blind spot, handle: " << handle
-              << ", return code: " << response->ret_code
-              << ", error key: " << response->error_key << std::endl;
+    std::cout << "failed to set blind spot, handle: " << handle;
+    if (response != nullptr) {
+      std::cout << ", return code: " << response->ret_code
+                << ", error key: " << response->error_key;
+    }
+    std::cout << std::endl;
   }
   return;
 }
@@ -247,9 +257,12 @@ void LivoxLidarCallback::SetDualEmitCallback(livox_status status, uint32_t handl
     std::cout << "set dual emit mode timeout, handle: " << handle
               << ", try again..." << std::endl;
   } else {
-    std::cout << "failed to set dual emit mode, handle: " << handle
-              << ", return code: " << response->ret_code
-              << ", error key: " << response->error_key << std::endl;
+    std::cout << "failed to set dual emit mode, handle: " << handle;
+    if (response != nullptr) {
+      std::cout << ", return code: " << response->ret_code
+                << ", error key: " << response->error_key;
+    }
+    std::cout << std::endl;
   }
   return;
 }
