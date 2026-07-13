@@ -50,11 +50,23 @@ uint32_t CalculatePacketQueueSize(const double publish_freq) {
 std::string IpNumToString(uint32_t ip_num) {
   struct in_addr ip;
   ip.s_addr = ip_num;
-  return std::string(inet_ntoa(ip));
+  // inet_ntoa returns a shared static buffer and is not thread-safe;
+  // this is called concurrently from the init and publish threads.
+  char buf[INET_ADDRSTRLEN] = {0};
+  if (inet_ntop(AF_INET, &ip, buf, sizeof(buf)) == nullptr) {
+    return std::string();
+  }
+  return std::string(buf);
 }
 
 uint32_t IpStringToNum(std::string ip_string) {
-  return static_cast<uint32_t>(inet_addr(ip_string.c_str()));
+  struct in_addr ip;
+  if (inet_pton(AF_INET, ip_string.c_str(), &ip) != 1) {
+    // Same sentinel inet_addr used for malformed input, but reject
+    // partial forms like "192.168.1" that inet_addr silently accepted.
+    return INADDR_NONE;
+  }
+  return static_cast<uint32_t>(ip.s_addr);
 }
 
 std::string ReplacePeriodByUnderline(std::string str) {
