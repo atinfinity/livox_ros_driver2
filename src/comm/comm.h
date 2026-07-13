@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <atomic>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -203,11 +204,14 @@ typedef struct {
 } RawPacket;
 
 typedef struct {
-  StoragePacket *storage_packet;
-  volatile uint32_t rd_idx;
-  volatile uint32_t wr_idx;
-  uint32_t mask;
-  uint32_t size; /**< must be power of 2. */
+  // The queue is written by the SDK/pub_handler thread and read by the
+  // ROS poll thread; atomics (not volatile) provide the required
+  // atomicity and memory ordering between the two.
+  std::atomic<StoragePacket *> storage_packet{nullptr};
+  std::atomic<uint32_t> rd_idx{0};
+  std::atomic<uint32_t> wr_idx{0};
+  uint32_t mask{0};
+  uint32_t size{0}; /**< must be power of 2. */
 } LidarDataQueue;
 
 /*****************************/

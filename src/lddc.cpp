@@ -26,11 +26,13 @@
 #include "comm/ldq.h"
 #include "comm/comm.h"
 
+#include <chrono>
 #include <inttypes.h>
 #include <iostream>
 #include <iomanip>
 #include <math.h>
 #include <stdint.h>
+#include <thread>
 
 #include "include/ros_headers.h"
 
@@ -75,6 +77,9 @@ int Lddc::RegisterLds(Lds *lds) {
 void Lddc::DistributePointCloudData(void) {
   if (!lds_) {
     std::cout << "lds is not registered" << std::endl;
+    // Back off so the poll thread does not busy-spin at 100% CPU
+    // when no data source was ever registered.
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return;
   }
   if (lds_->IsRequestExit()) {
@@ -97,6 +102,7 @@ void Lddc::DistributePointCloudData(void) {
 void Lddc::DistributeImuData(void) {
   if (!lds_) {
     std::cout << "lds is not registered" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return;
   }
   if (lds_->IsRequestExit()) {

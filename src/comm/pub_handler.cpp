@@ -126,10 +126,37 @@ void PubHandler::OnLivoxLidarPointCloudCallback(uint32_t handle, const uint8_t d
     }
     return;
   }
+  // Validate the untrusted packet fields before use: a corrupt or
+  // truncated UDP packet must not crash the driver (division by zero
+  // below, unsigned underflow of the payload length, or out-of-bounds
+  // reads in the point processing functions).
+  uint32_t point_size = 0;
+  switch (data->data_type) {
+    case kLivoxLidarCartesianCoordinateHighData:
+      point_size = sizeof(LivoxLidarCartesianHighRawPoint);
+      break;
+    case kLivoxLidarCartesianCoordinateLowData:
+      point_size = sizeof(LivoxLidarCartesianLowRawPoint);
+      break;
+    case kLivoxLidarSphericalCoordinateData:
+      point_size = sizeof(LivoxLidarSpherPoint);
+      break;
+    default:
+      printf("Drop point cloud packet, unknown data type:%u.\n", data->data_type);
+      return;
+  }
+  if (data->dot_num == 0 || data->length < sizeof(LivoxLidarEthernetPacket) ||
+      static_cast<uint64_t>(data->length) - sizeof(LivoxLidarEthernetPacket) + 1 <
+          static_cast<uint64_t>(data->dot_num) * point_size) {
+    printf("Drop invalid point cloud packet, dot_num:%u, length:%u.\n",
+           data->dot_num, data->length);
+    return;
+  }
+
   RawPacket packet = {};
   packet.handle = handle;
   packet.lidar_type = LidarProtoType::kLivoxLidarType;
-  packet.extrinsic_enable = false; 
+  packet.extrinsic_enable = false;
   if (dev_type == LivoxLidarDeviceType::kLivoxLidarTypeIndustrialHAP) {
     packet.line_num = kLineNumberHAP;
   } else if (dev_type == LivoxLidarDeviceType::kLivoxLidarTypeMid360) {
